@@ -82,6 +82,10 @@ module Mongoid::TaggableWithContext
           def #{tags_field}_tagged_with(tags)
             tagged_with(:"#{tags_field}", tags)
           end
+
+          def #{tags_field}_tagged_with_any(tags)
+            tagged_with_any(:"#{tags_field}", tags)
+          end
         end
       END
 
@@ -144,6 +148,23 @@ module Mongoid::TaggableWithContext
       tags = convert_string_to_array(tags, get_tag_separator_for(context)) if tags.is_a? String
       array_field = tag_options_for(context)[:array_field]
       all_in(array_field => tags)
+    end
+
+    # Find documents tagged with any of the tags passed as a parameter, given
+    # as an Array or a String using the configured separator.
+    #
+    # @example Find matching any tags in an Array.
+    #   Article.tagged_with_any(['ruby', 'mongodb'])
+    # @example Find matching any tags in a String.
+    #   Article.tagged_with_any('ruby, mongodb')
+    #
+    # @param [ String ] :field The field name of the tag.
+    # @param [ Array<String, Symbol>, String ] :tags Tags to match.
+    # @return [ Criteria ] A new criteria.
+    def tagged_with_any(context, tags)
+      tags = convert_string_to_array(tags, get_tag_separator_for(context)) if tags.is_a? String
+      array_field = tag_options_for(context)[:array_field]
+      any_in(array_field => tags)
     end
 
     # Helper method to convert a String to an Array based on the

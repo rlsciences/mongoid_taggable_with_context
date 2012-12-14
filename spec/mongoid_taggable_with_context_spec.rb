@@ -146,6 +146,19 @@ describe Mongoid::TaggableWithContext do
       (MyModel.artists_tagged_with("aaron").to_a - [@m1, @m3]).should be_empty
     end
   end
+
+  context "tagged_with_any" do
+    before :each do
+      @m1 = MyModel.create!(:tags => "food ant bee", :artists => "jeff greg mandy aaron andy")
+      @m2 = MyModel.create!(:tags => "juice food bee zip", :artists => "grant andrew andy")
+      @m3 = MyModel.create!(:tags => "honey strip food", :artists => "mandy aaron andy")
+    end
+    
+    it "should retrieve a list of documents" do
+      (MyModel.tags_tagged_with_any("ant, strip").to_a - [@m1, @m2]).should be_empty
+      (MyModel.artists_tagged_with_any("jeff, grant").to_a - [@m1, @m2]).should be_empty
+    end
+  end
   
   context "no aggregation" do
     it "should raise AggregationStrategyMissing exception when retreiving tags" do
