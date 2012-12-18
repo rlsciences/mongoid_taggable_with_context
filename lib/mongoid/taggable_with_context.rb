@@ -45,7 +45,7 @@ module Mongoid::TaggableWithContext
       options = args.extract_options!
       tags_field = (args.blank? ? :tags : args.shift).to_sym
       options.reverse_merge!(
-        :separator => ' ',
+        :separator => ',',
         :array_field => "#{tags_field}_array".to_sym
       )
       tags_array_field = options[:array_field]
@@ -130,7 +130,7 @@ module Mongoid::TaggableWithContext
     end
 
     def set_tag_separator_for(context, value)
-      self.taggable_with_context_options[context][:separator] = value.nil? ? " " : value.to_s
+      self.taggable_with_context_options[context][:separator] = value.nil? ? "," : value.to_s
     end
 
     # Find documents tagged with all tags passed as a parameter, given
@@ -169,12 +169,12 @@ module Mongoid::TaggableWithContext
 
     # Helper method to convert a String to an Array based on the
     # configured tag separator.
-    def convert_string_to_array(str = "", separator = " ")
+    def convert_string_to_array(str = "", separator = ",")
       clean_up_array(str.split(separator))
     end
 
-    def convert_array_to_string(ary = [], separator = " ")
-      ary.join(separator)
+    def convert_array_to_string(ary = [], separator = ",")
+      ary.join(separator) unless ary.nil?
     end
 
     def clean_up_array(ary = [])
